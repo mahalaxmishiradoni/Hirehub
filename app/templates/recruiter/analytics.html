@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Recruiter Analytics{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+  <h3 class="fw-bold mb-4"><i class="bi bi-bar-chart me-2 text-success"></i>Recruitment Analytics</h3>
+
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    {% for label, val, color in [
+      ('Active Jobs', stats.get('active_jobs',0), 'primary'),
+      ('Total Applications', stats.get('total_applications',0), 'info'),
+      ('Shortlisted', stats.get('shortlisted',0), 'warning'),
+      ('Selected', stats.get('selected',0), 'success'),
+    ] %}
+    <div class="col-6 col-md-3">
+      <div class="card border-0 shadow-sm text-center">
+        <div class="card-body py-3">
+          <div class="fs-2 fw-bold text-{{ color }}">{{ val }}</div>
+          <div class="text-muted small">{{ label }}</div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Chart -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-0 py-3">
+      <h6 class="fw-bold mb-0"><i class="bi bi-pie-chart me-2 text-primary"></i>Applications by Status</h6>
+    </div>
+    <div class="card-body">
+      <div class="row justify-content-center">
+        <div class="col-md-5">
+          <canvas id="appStatusChart" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const appStatusData = {{ apps_by_status | tojson }};
+new Chart(document.getElementById('appStatusChart'), {
+  type: 'doughnut',
+  data: {
+    labels: appStatusData.labels || [],
+    datasets: [{
+      data: appStatusData.data || [],
+      backgroundColor: ['#0d6efd','#ffc107','#198754','#dc3545','#6c757d','#0dcaf0','#6610f2'],
+    }]
+  },
+  options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+});
+</script>
+{% endblock %}

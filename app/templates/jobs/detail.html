@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}{{ job.get('title','Job Detail') }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row g-4">
+    <!-- Main content -->
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+            <div>
+              <h2 class="fw-bold mb-1">{{ job.get('title','') }}</h2>
+              <div class="text-muted">
+                <span class="me-3"><i class="bi bi-building me-1"></i>{{ job.get('company_name','') }}</span>
+                <span class="me-3"><i class="bi bi-geo-alt me-1"></i>{{ job.get('location','') }}</span>
+                <span><i class="bi bi-calendar me-1"></i>Posted {{ job.get('posted_date','')[:10] if job.get('posted_date') else '' }}</span>
+              </div>
+            </div>
+            <span class="badge status-badge-{{ job.get('status','').lower() }} fs-6">{{ job.get('status','') }}</span>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2 mb-4">
+            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">
+              <i class="bi bi-laptop me-1"></i>{{ job.get('work_mode','').title() }}
+            </span>
+            <span class="badge bg-secondary bg-opacity-10 text-secondary px-3 py-2">
+              <i class="bi bi-clock me-1"></i>{{ job.get('employment_type','').replace('_',' ').title() }}
+            </span>
+            {% if job.get('salary_min') or job.get('salary_max') %}
+            <span class="badge bg-success bg-opacity-10 text-success px-3 py-2">
+              <i class="bi bi-currency-rupee me-1"></i>{{ job.get('salary_min',0)|int }}–{{ job.get('salary_max',0)|int }} LPA
+            </span>
+            {% endif %}
+            <span class="badge bg-info bg-opacity-10 text-info px-3 py-2">
+              <i class="bi bi-person-fill me-1"></i>{{ job.get('experience_min',0) }}–{{ job.get('experience_max',0) }} yrs exp
+            </span>
+            {% if job.get('deadline') %}
+            <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2">
+              <i class="bi bi-alarm me-1"></i>Deadline: {{ job.get('deadline','')[:10] if job.get('deadline') else 'N/A' }}
+            </span>
+            {% endif %}
+          </div>
+
+          <h5 class="fw-bold mb-2">Job Description</h5>
+          <div class="text-muted mb-4" style="white-space:pre-line;">{{ job.get('description','') }}</div>
+
+          {% if job.get('skills') %}
+          <h5 class="fw-bold mb-2">Required Skills</h5>
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            {% for skill in job['skills'] %}
+            <span class="badge bg-primary bg-opacity-10 text-primary skill-badge px-3 py-2">{{ skill }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <!-- Apply card -->
+      <div class="card border-0 shadow-sm mb-3 sticky-top" style="top:80px;">
+        <div class="card-body p-4">
+          {% if match_result %}
+          <div class="text-center mb-3">
+            <div class="match-score-circle mx-auto mb-2" style="--score:{{ match_result.score }};">
+              <span class="fw-bold fs-4 text-{{ 'success' if match_result.score >= 70 else ('warning' if match_result.score >= 40 else 'danger') }}">
+                {{ match_result.score }}%
+              </span>
+            </div>
+            <div class="fw-semibold">Match Score</div>
+          </div>
+          {% if match_result.matched_skills %}
+          <div class="mb-2">
+            <small class="fw-semibold text-success"><i class="bi bi-check-circle me-1"></i>Matched Skills</small>
+            <div class="d-flex flex-wrap gap-1 mt-1">
+              {% for s in match_result.matched_skills %}
+              <span class="badge bg-success-subtle text-success">{{ s }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+          {% if match_result.missing_skills %}
+          <div class="mb-3">
+            <small class="fw-semibold text-danger"><i class="bi bi-x-circle me-1"></i>Missing Skills</small>
+            <div class="d-flex flex-wrap gap-1 mt-1">
+              {% for s in match_result.missing_skills %}
+              <span class="badge bg-danger-subtle text-danger">{{ s }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+          <hr>
+          {% endif %}
+
+          {% if session.get('role') == 'CANDIDATE' %}
+            {% if user_application %}
+              <div class="alert alert-info py-2 mb-3 text-center small">
+                <i class="bi bi-check-circle me-1"></i>
+                Applied — <strong>{{ user_application.get('status','') }}</strong>
+              </div>
+              {% if user_application.get('status') not in ['SELECTED','REJECTED','WITHDRAWN'] %}
+              <form method="POST" action="{{ url_for('candidate.withdraw_application', app_id=user_application.get('_id','')) }}" onsubmit="return confirm('Withdraw this application?')">
+                <button type="submit" class="btn btn-outline-danger w-100 btn-sm">
+                  <i class="bi bi-x-circle me-1"></i>Withdraw Application
+                </button>
+              </form>
+              {% endif %}
+            {% elif job.get('status') == 'OPEN' %}
+            <form method="POST" action="{{ url_for('jobs.apply_job', job_id=job.get('_id','')) }}">
+              <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                <i class="bi bi-send me-2"></i>Apply Now
+              </button>
+            </form>
+            <form method="POST" action="{{ url_for('jobs.save_job', job_id=job.get('_id','')) }}" class="mt-2">
+              <button type="submit" class="btn btn-outline-secondary w-100 btn-sm">
+                <i class="bi bi-bookmark me-1"></i>Save Job
+              </button>
+            </form>
+            {% else %}
+            <button class="btn btn-secondary w-100" disabled>This job is {{ job.get('status','').lower() }}</button>
+            {% endif %}
+          {% elif not session.get('user_id') %}
+          <a href="{{ url_for('auth.login') }}" class="btn btn-primary w-100 fw-semibold">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Login to Apply
+          </a>
+          {% endif %}
+
+          <!-- Job summary -->
+          <hr class="my-3">
+          <ul class="list-unstyled small text-muted mb-0">
+            <li class="mb-2"><i class="bi bi-briefcase me-2 text-primary"></i><strong>Type:</strong> {{ job.get('employment_type','').replace('_',' ').title() }}</li>
+            <li class="mb-2"><i class="bi bi-laptop me-2 text-primary"></i><strong>Mode:</strong> {{ job.get('work_mode','').title() }}</li>
+            <li class="mb-2"><i class="bi bi-geo-alt me-2 text-primary"></i><strong>Location:</strong> {{ job.get('location','') }}</li>
+            <li class="mb-2"><i class="bi bi-person me-2 text-primary"></i><strong>Experience:</strong> {{ job.get('experience_min',0) }}–{{ job.get('experience_max',0) }} years</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

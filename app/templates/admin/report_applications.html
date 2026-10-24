@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Application Report{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <a href="{{ url_for('admin.reports') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i></a>
+    <h3 class="fw-bold mb-0">Application Report</h3>
+  </div>
+
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <form method="GET" class="row g-3 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label fw-semibold small">From Date</label>
+          <input type="date" name="date_from" class="form-control form-control-sm" value="{{ filters.get('date_from','') }}">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold small">To Date</label>
+          <input type="date" name="date_to" class="form-control form-control-sm" value="{{ filters.get('date_to','') }}">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold small">Status</label>
+          <select name="status" class="form-select form-select-sm">
+            <option value="">All</option>
+            {% for s in ['APPLIED','UNDER_REVIEW','SHORTLISTED','INTERVIEW_SCHEDULED','SELECTED','REJECTED','WITHDRAWN'] %}
+            <option value="{{ s }}" {% if filters.get('status') == s %}selected{% endif %}>{{ s.replace('_',' ').title() }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+          <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+          <a href="{{ url_for('admin.report_applications') }}" class="btn btn-outline-secondary btn-sm">Clear</a>
+          <a href="{{ url_for('admin.report_applications', download=1, **filters) }}" class="btn btn-success btn-sm ms-auto">
+            <i class="bi bi-download me-1"></i>CSV
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="ps-4">Candidate</th>
+            <th>Job</th>
+            <th>Status</th>
+            <th>Applied</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in data %}
+          <tr>
+            <td class="ps-4">
+              <div class="fw-semibold">{{ a.get('candidate_name','—') }}</div>
+              <div class="text-muted small">{{ a.get('candidate_email','') }}</div>
+            </td>
+            <td class="fw-semibold small">{{ a.get('job_title','—') }}</td>
+            <td><span class="badge status-badge-{{ a.get('status','').lower() }}">{{ a.get('status','') }}</span></td>
+            <td class="small text-muted">{{ a.get('applied_at','')[:10] if a.get('applied_at') else '—' }}</td>
+            <td class="small text-muted">{{ a.get('recruiter_notes','') or '—' }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" class="text-center text-muted py-4">No records found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Error {{ code }}{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+  <div class="py-5">
+    <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size:4rem;"></i>
+    <h2 class="fw-bold mt-3">Error {{ code }}</h2>
+    <p class="text-muted lead">{{ message }}</p>
+    <a href="{{ url_for('auth.index') }}" class="btn btn-primary mt-2">Go Home</a>
+  </div>
+</div>
+{% endblock %}

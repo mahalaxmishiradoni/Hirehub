@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Analytics{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+  <h3 class="fw-bold mb-4"><i class="bi bi-bar-chart-fill me-2 text-success"></i>Platform Analytics</h3>
+
+  <!-- Overview stats -->
+  <div class="row g-3 mb-4">
+    {% for label, val, color in [
+      ('Users', overview.get('total_users',0), 'primary'),
+      ('Candidates', overview.get('candidates',0), 'info'),
+      ('Recruiters', overview.get('recruiters',0), 'secondary'),
+      ('Companies', overview.get('total_companies',0), 'warning'),
+      ('Open Jobs', overview.get('open_jobs',0), 'success'),
+      ('Applications', overview.get('total_applications',0), 'danger'),
+    ] %}
+    <div class="col-6 col-md-4 col-xl-2">
+      <div class="card border-0 shadow-sm text-center">
+        <div class="card-body py-3">
+          <div class="fs-2 fw-bold text-{{ color }}">{{ val }}</div>
+          <div class="text-muted small">{{ label }}</div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Charts row 1 -->
+  <div class="row g-4 mb-4">
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-0 py-3">
+          <h6 class="fw-bold mb-0"><i class="bi bi-graph-up me-2 text-primary"></i>Monthly Applications</h6>
+        </div>
+        <div class="card-body">
+          <canvas id="monthlyAppsChart" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-0 py-3">
+          <h6 class="fw-bold mb-0"><i class="bi bi-people me-2 text-info"></i>Monthly Registrations</h6>
+        </div>
+        <div class="card-body">
+          <canvas id="monthlyRegsChart" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts row 2 -->
+  <div class="row g-4 mb-4">
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-0 py-3">
+          <h6 class="fw-bold mb-0"><i class="bi bi-pie-chart me-2 text-warning"></i>Applications by Status</h6>
+        </div>
+        <div class="card-body d-flex align-items-center justify-content-center">
+          <canvas id="appStatusChart" height="260"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-0 py-3">
+          <h6 class="fw-bold mb-0"><i class="bi bi-lightning me-2 text-success"></i>Top Demanded Skills</h6>
+        </div>
+        <div class="card-body">
+          <canvas id="skillsChart" height="260"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-0 py-3">
+          <h6 class="fw-bold mb-0"><i class="bi bi-geo-alt me-2 text-danger"></i>Jobs by Location</h6>
+        </div>
+        <div class="card-body">
+          <canvas id="locationChart" height="260"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Applications by company -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-0 py-3">
+      <h6 class="fw-bold mb-0"><i class="bi bi-building me-2 text-secondary"></i>Applications by Company</h6>
+    </div>
+    <div class="card-body">
+      <canvas id="companyChart" height="120"></canvas>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const COLORS = ['#0d6efd','#ffc107','#198754','#dc3545','#6c757d','#0dcaf0','#6610f2','#fd7e14','#20c997','#d63384'];
+
+const monthlyApps   = {{ monthly_apps   | tojson }};
+const monthlyRegs   = {{ monthly_regs   | tojson }};
+const appStatus     = {{ apps_by_status | tojson }};
+const skillsData    = {{ jobs_by_skill  | tojson }};
+const locationData  = {{ jobs_by_location | tojson }};
+const companyData   = {{ apps_by_company  | tojson }};
+
+new Chart(document.getElementById('monthlyAppsChart'), {
+  type: 'line',
+  data: { labels: monthlyApps.labels, datasets: [{ label: 'Applications', data: monthlyApps.data, borderColor: '#0d6efd', backgroundColor: 'rgba(13,110,253,0.1)', fill: true, tension: 0.4 }] },
+  options: { responsive: true, plugins: { legend: { display: false } } }
+});
+
+new Chart(document.getElementById('monthlyRegsChart'), {
+  type: 'bar',
+  data: { labels: monthlyRegs.labels, datasets: [{ label: 'Registrations', data: monthlyRegs.data, backgroundColor: '#0dcaf0' }] },
+  options: { responsive: true, plugins: { legend: { display: false } } }
+});
+
+new Chart(document.getElementById('appStatusChart'), {
+  type: 'doughnut',
+  data: { labels: appStatus.labels, datasets: [{ data: appStatus.data, backgroundColor: COLORS }] },
+  options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+});
+
+new Chart(document.getElementById('skillsChart'), {
+  type: 'bar',
+  data: { labels: skillsData.labels, datasets: [{ data: skillsData.data, backgroundColor: '#198754' }] },
+  options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } } }
+});
+
+new Chart(document.getElementById('locationChart'), {
+  type: 'bar',
+  data: { labels: locationData.labels, datasets: [{ data: locationData.data, backgroundColor: '#dc3545' }] },
+  options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } } }
+});
+
+new Chart(document.getElementById('companyChart'), {
+  type: 'bar',
+  data: { labels: companyData.labels, datasets: [{ label: 'Applications', data: companyData.data, backgroundColor: COLORS }] },
+  options: { responsive: true, plugins: { legend: { display: false } } }
+});
+</script>
+{% endblock %}

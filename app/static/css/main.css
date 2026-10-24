@@ -1,0 +1,141 @@
+/* ============================================================
+   HireHub — Main Stylesheet
+   Bootstrap 5 base, custom tokens, and component overrides
+   ============================================================ */
+
+/* ---- Root tokens ---- */
+:root {
+  --hh-primary: #0d6efd;
+  --hh-accent:  #ffc107;
+  --hh-success: #198754;
+  --hh-danger:  #dc3545;
+  --hh-bg:      #f8f9fa;
+  --hh-card-radius: 0.75rem;
+  --hh-shadow:  0 2px 12px rgba(0,0,0,.07);
+}
+
+/* ---- Body ---- */
+body {
+  background-color: var(--hh-bg);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* ---- Navbar ---- */
+.navbar {
+  backdrop-filter: blur(8px);
+}
+.avatar-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #fff;
+}
+
+/* ---- Hero section ---- */
+.hero-section {
+  background: linear-gradient(135deg, #0d6efd 0%, #0056d2 60%, #6610f2 100%);
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+}
+
+/* ---- Cards ---- */
+.card {
+  border-radius: var(--hh-card-radius);
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+.job-card:hover,
+.admin-quick-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.12) !important;
+}
+
+/* ---- Stat icon box ---- */
+.stat-icon-box {
+  min-width: 52px;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- Skill badges ---- */
+.skill-badge {
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 4px 10px;
+}
+
+/* ---- Status badges ---- */
+.status-badge-open            { background: #d1e7dd; color: #0f5132; border-radius:12px; padding:3px 10px; font-size:.78rem; font-weight:600; }
+.status-badge-closed          { background: #f8d7da; color: #842029; border-radius:12px; padding:3px 10px; font-size:.78rem; font-weight:600; }
+.status-badge-expired         { background: #e2e3e5; color: #41464b; border-radius:12px; padding:3px 10px; font-size:.78rem; font-weight:600; }
+.status-badge-applied         { background: #cfe2ff; color: #084298; border-radius:12px; padding:3px 10px; font-size:.78rem; font-weight:600; }
+.status-badge-under_review    { background: #fff3cd; color: #664d03; border-radius:12px; padding:3px 10px; font-size:.78rem; font-weight:600; }
+.status-badge-shortlisted     { background: #d1e7dd; color: #0f5132; border-radius:12px; padding:3px 10px; font-size:.78rem; font-weight:600; }
+.status-badge-interview_scheduled { background: #cff4fc; color: #055160; border-radius:12px; padding:3px 10px; font-size:.78rem; font-weight:600; }
+.status-badge-selected        { background: #198754; color: #fff; border-radius:12px; padding:3px 10px; font-size:.78rem; font-weight:600; }
+.status-badge-rejected        { background: #f8d7da; color: #842029; border-radius:12px; padding:3px 10px; font-size:.78rem; font-weight:600; }
+.status-badge-withdrawn       { background: #e2e3e5; color: #41464b; border-radius:12px; padding:3px 10px; font-size:.78rem; font-weight:600; }
+
+/* ---- Upload area ---- */
+.upload-area {
+  background: #f0f4ff;
+  border: 2px dashed var(--hh-primary) !important;
+  cursor: pointer;
+  transition: background .2s;
+}
+.upload-area:hover {
+  background: #e0eaff;
+}
+
+/* ---- Match score ring (simple) ---- */
+.match-score-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 5px solid #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+}
+
+/* ---- Pagination ---- */
+.page-link {
+  border-radius: 6px !important;
+  margin: 0 2px;
+}
+
+/* ---- Table ---- */
+.table > :not(caption) > * > * {
+  vertical-align: middle;
+}
+
+/* ---- Last border remover ---- */
+.last-no-border:last-child {
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+}
+
+/* ---- Notification unread indicator ---- */
+.border-start.border-primary.border-3 {
+  border-left-width: 4px !important;
+}
+
+/* ---- Responsive tweaks ---- */
+@media (max-width: 768px) {
+  .hero-section { min-height: 280px; }
+  .display-4 { font-size: 1.8rem; }
+  .stat-icon-box { min-width: 40px; min-height: 40px; }
+}
+
+/* ---- Utility: border-dashed ---- */
+.border-dashed { border-style: dashed !important; }

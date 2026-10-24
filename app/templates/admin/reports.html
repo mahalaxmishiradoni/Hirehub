@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+  <h3 class="fw-bold mb-4"><i class="bi bi-file-earmark-bar-graph me-2 text-primary"></i>Reports</h3>
+
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body text-center p-4">
+          <i class="bi bi-person-lines-fill text-info" style="font-size:2.5rem;"></i>
+          <h5 class="fw-bold mt-3">Candidate Report</h5>
+          <p class="text-muted small">Registered candidates with skills, location, and experience.</p>
+          <a href="{{ url_for('admin.report_candidates') }}" class="btn btn-info btn-sm me-2">View</a>
+          <a href="{{ url_for('admin.report_candidates', download=1) }}" class="btn btn-outline-info btn-sm">
+            <i class="bi bi-download me-1"></i>CSV
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body text-center p-4">
+          <i class="bi bi-briefcase-fill text-success" style="font-size:2.5rem;"></i>
+          <h5 class="fw-bold mt-3">Job Report</h5>
+          <p class="text-muted small">Job postings by date, company, status, and location.</p>
+          <a href="{{ url_for('admin.report_jobs') }}" class="btn btn-success btn-sm me-2">View</a>
+          <a href="{{ url_for('admin.report_jobs', download=1) }}" class="btn btn-outline-success btn-sm">
+            <i class="bi bi-download me-1"></i>CSV
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body text-center p-4">
+          <i class="bi bi-send-fill text-warning" style="font-size:2.5rem;"></i>
+          <h5 class="fw-bold mt-3">Application Report</h5>
+          <p class="text-muted small">All applications filtered by status, date, or job.</p>
+          <a href="{{ url_for('admin.report_applications') }}" class="btn btn-warning btn-sm me-2">View</a>
+          <a href="{{ url_for('admin.report_applications', download=1) }}" class="btn btn-outline-warning btn-sm">
+            <i class="bi bi-download me-1"></i>CSV
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

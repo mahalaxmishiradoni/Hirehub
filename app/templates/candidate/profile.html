@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row g-4">
+    <!-- Profile card -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body text-center p-4">
+          <div class="avatar-lg bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:80px;height:80px;font-size:2rem;">
+            {{ profile.get('name','U')[0].upper() }}
+          </div>
+          <h5 class="fw-bold mb-1">{{ profile.get('name','') }}</h5>
+          <p class="text-muted small mb-2">{{ profile.get('email','') }}</p>
+          {% if profile.get('location') %}
+          <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1"></i>{{ profile.get('location','') }}</p>
+          {% endif %}
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+              <small class="fw-semibold">Profile Completion</small>
+              <small class="text-muted">{{ profile.get('profile_completion', 0) }}%</small>
+            </div>
+            <div class="progress" style="height:8px;">
+              <div class="progress-bar bg-{{ 'success' if profile.get('profile_completion',0) >= 70 else 'warning' }}"
+                   style="width:{{ profile.get('profile_completion',0) }}%"></div>
+            </div>
+          </div>
+          <a href="{{ url_for('candidate.edit_profile') }}" class="btn btn-primary w-100 btn-sm">
+            <i class="bi bi-pencil me-1"></i>Edit Profile
+          </a>
+        </div>
+      </div>
+
+      <!-- Resume card -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3">
+          <h6 class="fw-bold mb-0"><i class="bi bi-file-earmark-text me-2 text-primary"></i>Resume</h6>
+        </div>
+        <div class="card-body">
+          {% if resume %}
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <i class="bi bi-file-earmark-pdf text-danger fs-4"></i>
+            <div>
+              <div class="fw-semibold small">{{ resume.get('original_filename','') }}</div>
+              <div class="text-muted" style="font-size:0.75rem;">{{ (resume.get('file_size',0) / 1024)|int }} KB</div>
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <a href="{{ url_for('candidate.download_resume', resume_id=resume.get('_id','')) }}" class="btn btn-outline-primary btn-sm flex-grow-1">
+              <i class="bi bi-download me-1"></i>Download
+            </a>
+            <a href="{{ url_for('candidate.upload_resume') }}" class="btn btn-outline-secondary btn-sm flex-grow-1">
+              <i class="bi bi-arrow-repeat me-1"></i>Replace
+            </a>
+          </div>
+          {% else %}
+          <div class="text-center py-2">
+            <i class="bi bi-file-earmark-plus text-muted fs-3"></i>
+            <p class="text-muted small mt-2 mb-3">No resume uploaded yet.</p>
+            <a href="{{ url_for('candidate.upload_resume') }}" class="btn btn-primary btn-sm">
+              <i class="bi bi-upload me-1"></i>Upload Resume
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Details -->
+    <div class="col-lg-8">
+      <!-- Skills -->
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-header bg-white border-0 py-3">
+          <h6 class="fw-bold mb-0"><i class="bi bi-lightning-fill me-2 text-warning"></i>Skills</h6>
+        </div>
+        <div class="card-body">
+          {% if profile.get('skills') %}
+          <div class="d-flex flex-wrap gap-2">
+            {% for skill in profile['skills'] %}
+            <span class="badge bg-primary bg-opacity-10 text-primary skill-badge px-3 py-2">{{ skill }}</span>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="text-muted small mb-0">No skills added. <a href="{{ url_for('candidate.edit_profile') }}">Add skills</a></p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Contact info -->
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-header bg-white border-0 py-3">
+          <h6 class="fw-bold mb-0"><i class="bi bi-info-circle me-2 text-info"></i>Profile Details</h6>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <small class="text-muted d-block">Phone</small>
+              <span class="fw-semibold">{{ profile.get('phone','—') }}</span>
+            </div>
+            <div class="col-sm-6">
+              <small class="text-muted d-block">Expected Salary</small>
+              <span class="fw-semibold">{{ '₹' + profile.get('expected_salary','')|string + ' LPA' if profile.get('expected_salary') else '—' }}</span>
+            </div>
+            <div class="col-sm-6">
+              <small class="text-muted d-block">Notice Period</small>
+              <span class="fw-semibold">{{ profile.get('notice_period','—') }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Experience -->
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-header bg-white border-0 py-3">
+          <h6 class="fw-bold mb-0"><i class="bi bi-briefcase me-2 text-secondary"></i>Experience</h6>
+        </div>
+        <div class="card-body">
+          {% if profile.get('experience') %}
+          {% for exp in profile['experience'] %}
+          <div class="mb-3 pb-3 border-bottom last-no-border">
+            {% if exp is mapping %}
+              <div class="fw-semibold">{{ exp.get('title', exp.get('value', '')) }}</div>
+              {% if exp.get('company') or exp.get('years') %}
+              <div class="text-muted small">{{ exp.get('company', '') }}{% if exp.get('company') and exp.get('years') %} · {% endif %}{% if exp.get('years') %}{{ exp.get('years', 0) }} year(s){% endif %}</div>
+              {% endif %}
+              {% if exp.get('description') %}
+              <div class="text-muted small mt-1">{{ exp.get('description', '') }}</div>
+              {% endif %}
+            {% else %}
+              {# Legacy plain-string entry — display as-is #}
+              <div class="fw-semibold">{{ exp }}</div>
+            {% endif %}
+          </div>
+          {% endfor %}
+          {% else %}
+          <p class="text-muted small mb-0">No experience added. <a href="{{ url_for('candidate.edit_profile') }}">Add experience</a></p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Education -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3">
+          <h6 class="fw-bold mb-0"><i class="bi bi-mortarboard me-2 text-success"></i>Education</h6>
+        </div>
+        <div class="card-body">
+          {% if profile.get('education') %}
+          {% for edu in profile['education'] %}
+          <div class="mb-3 pb-3 border-bottom last-no-border">
+            {% if edu is mapping %}
+              <div class="fw-semibold">{{ edu.get('degree', edu.get('value', '')) }}</div>
+              {% if edu.get('institution') or edu.get('year') %}
+              <div class="text-muted small">{{ edu.get('institution', '') }}{% if edu.get('institution') and edu.get('year') %} · {% endif %}{{ edu.get('year', '') }}</div>
+              {% endif %}
+            {% else %}
+              {# Legacy plain-string entry — display as-is #}
+              <div class="fw-semibold">{{ edu }}</div>
+            {% endif %}
+          </div>
+          {% endfor %}
+          {% else %}
+          <p class="text-muted small mb-0">No education added. <a href="{{ url_for('candidate.edit_profile') }}">Add education</a></p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

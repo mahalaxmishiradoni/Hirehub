@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+  <div class="mb-4">
+    <h2 class="fw-bold mb-0">Admin Dashboard</h2>
+    <p class="text-muted">Platform overview and management.</p>
+  </div>
+
+  <!-- Overview stats -->
+  <div class="row g-3 mb-4">
+    {% set cards = [
+      ('Total Users', overview.get('total_users', 0), 'bi-people-fill', 'primary'),
+      ('Candidates', overview.get('candidates', 0), 'bi-person-fill', 'info'),
+      ('Recruiters', overview.get('recruiters', 0), 'bi-person-badge-fill', 'secondary'),
+      ('Companies', overview.get('total_companies', 0), 'bi-building-fill', 'warning'),
+      ('Total Jobs', overview.get('total_jobs', 0), 'bi-briefcase-fill', 'success'),
+      ('Open Jobs', overview.get('open_jobs', 0), 'bi-briefcase', 'primary'),
+      ('Applications', overview.get('total_applications', 0), 'bi-send-fill', 'danger'),
+      ('Interviews', overview.get('total_interviews', 0), 'bi-camera-video-fill', 'info'),
+      ('Selections', overview.get('selected_candidates', 0), 'bi-trophy-fill', 'success'),
+    ] %}
+    {% for label, val, icon, color in cards %}
+    <div class="col-6 col-md-4 col-xl-3">
+      <div class="card border-0 shadow-sm text-center h-100">
+        <div class="card-body py-3">
+          <i class="bi {{ icon }} text-{{ color }} fs-3 mb-2"></i>
+          <div class="fs-2 fw-bold">{{ val }}</div>
+          <div class="text-muted small">{{ label }}</div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Quick links -->
+  <div class="row g-3">
+    <div class="col-md-3">
+      <a href="{{ url_for('admin.users') }}" class="card border-0 shadow-sm text-decoration-none text-dark h-100 admin-quick-card">
+        <div class="card-body text-center py-4">
+          <i class="bi bi-people fs-1 text-primary mb-2"></i>
+          <h6 class="fw-bold">Manage Users</h6>
+          <p class="text-muted small mb-0">View, activate or deactivate accounts</p>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-3">
+      <a href="{{ url_for('admin.companies') }}" class="card border-0 shadow-sm text-decoration-none text-dark h-100 admin-quick-card">
+        <div class="card-body text-center py-4">
+          <i class="bi bi-building fs-1 text-warning mb-2"></i>
+          <h6 class="fw-bold">Companies</h6>
+          <p class="text-muted small mb-0">Verify and manage company profiles</p>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-3">
+      <a href="{{ url_for('admin.analytics') }}" class="card border-0 shadow-sm text-decoration-none text-dark h-100 admin-quick-card">
+        <div class="card-body text-center py-4">
+          <i class="bi bi-bar-chart-fill fs-1 text-success mb-2"></i>
+          <h6 class="fw-bold">Analytics</h6>
+          <p class="text-muted small mb-0">Charts, trends, and platform stats</p>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-3">
+      <a href="{{ url_for('admin.audit_logs') }}" class="card border-0 shadow-sm text-decoration-none text-dark h-100 admin-quick-card">
+        <div class="card-body text-center py-4">
+          <i class="bi bi-journal-text fs-1 text-danger mb-2"></i>
+          <h6 class="fw-bold">Audit Logs</h6>
+          <p class="text-muted small mb-0">Track all platform events</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

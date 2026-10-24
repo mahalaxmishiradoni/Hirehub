@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Recommended Jobs{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="mb-4">
+    <h3 class="fw-bold mb-1"><i class="bi bi-stars me-2 text-warning"></i>Recommended Jobs</h3>
+    <p class="text-muted">Jobs matched to your skills and experience.</p>
+  </div>
+
+  {% if recommendations %}
+  <div class="row g-3">
+    {% for job in recommendations %}
+    <div class="col-md-6 col-xl-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h5 class="fw-bold mb-0">
+              <a href="{{ url_for('jobs.job_detail', job_id=job.get('_id','')) }}" class="text-decoration-none text-dark">{{ job.get('title','') }}</a>
+            </h5>
+            <span class="badge bg-{{ 'success' if job.get('match_score',0) >= 70 else ('warning' if job.get('match_score',0) >= 40 else 'danger') }} fs-6">
+              {{ job.get('match_score',0) }}%
+            </span>
+          </div>
+          <div class="text-muted small mb-3">
+            <div><i class="bi bi-building me-1"></i>{{ job.get('company_name','') }}</div>
+            <div><i class="bi bi-geo-alt me-1"></i>{{ job.get('location','') }}</div>
+            <div><i class="bi bi-laptop me-1"></i>{{ job.get('work_mode','').title() }}</div>
+          </div>
+
+          {% if job.get('matched_skills') %}
+          <div class="mb-2">
+            <small class="text-success fw-semibold"><i class="bi bi-check-circle me-1"></i>Matched</small>
+            <div class="d-flex flex-wrap gap-1 mt-1">
+              {% for s in job.get('matched_skills',[])[:4] %}
+              <span class="badge bg-success-subtle text-success">{{ s }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          {% if job.get('missing_skills') %}
+          <div class="mb-3">
+            <small class="text-danger fw-semibold"><i class="bi bi-x-circle me-1"></i>Missing</small>
+            <div class="d-flex flex-wrap gap-1 mt-1">
+              {% for s in job.get('missing_skills',[])[:3] %}
+              <span class="badge bg-danger-subtle text-danger">{{ s }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          <a href="{{ url_for('jobs.job_detail', job_id=job.get('_id','')) }}" class="btn btn-primary btn-sm w-100">
+            View & Apply
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-5">
+    <i class="bi bi-stars text-muted" style="font-size:3rem;"></i>
+    <h5 class="mt-3 text-muted">No recommendations yet</h5>
+    <p class="text-muted">Add skills and experience to your profile to get personalised job recommendations.</p>
+    <a href="{{ url_for('candidate.edit_profile') }}" class="btn btn-warning">Update Profile</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

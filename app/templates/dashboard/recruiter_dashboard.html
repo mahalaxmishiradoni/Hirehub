@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Recruiter Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="fw-bold mb-0">Welcome, {{ session.get('name', 'Recruiter') }}! 👋</h2>
+      <p class="text-muted mb-0">Manage your job postings and candidates.</p>
+    </div>
+    <a href="{{ url_for('recruiter.create_job') }}" class="btn btn-primary">
+      <i class="bi bi-plus-circle me-2"></i>Post a Job
+    </a>
+  </div>
+
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    {% set cards = [
+      ('Active Jobs', stats.get('active_jobs', 0), 'bi-briefcase-fill', 'primary'),
+      ('Total Jobs', stats.get('total_jobs', 0), 'bi-collection-fill', 'secondary'),
+      ('Applications', stats.get('total_applications', 0), 'bi-people-fill', 'info'),
+      ('Shortlisted', stats.get('shortlisted', 0), 'bi-star-fill', 'warning'),
+      ('Interviews', stats.get('interviews', 0), 'bi-camera-video-fill', 'danger'),
+      ('Selected', stats.get('selected', 0), 'bi-trophy-fill', 'success'),
+    ] %}
+    {% for label, val, icon, color in cards %}
+    <div class="col-6 col-xl-2">
+      <div class="card border-0 shadow-sm text-center h-100">
+        <div class="card-body py-3">
+          <i class="bi {{ icon }} text-{{ color }} fs-3 mb-2"></i>
+          <div class="fs-2 fw-bold">{{ val }}</div>
+          <div class="text-muted small">{{ label }}</div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Recent Jobs -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center py-3">
+      <h6 class="fw-bold mb-0"><i class="bi bi-briefcase me-2 text-primary"></i>Recent Job Postings</h6>
+      <a href="{{ url_for('recruiter.my_jobs') }}" class="btn btn-sm btn-outline-primary">View All</a>
+    </div>
+    <div class="card-body p-0">
+      {% if recent_jobs %}
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th class="ps-3">Title</th>
+              <th>Location</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Posted</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for job in recent_jobs %}
+            <tr>
+              <td class="ps-3 fw-semibold">{{ job.get('title','') }}</td>
+              <td class="text-muted small">{{ job.get('location','') }}</td>
+              <td class="text-muted small">{{ job.get('employment_type','').replace('_',' ') }}</td>
+              <td><span class="badge status-badge-{{ job.get('status','').lower() }}">{{ job.get('status','') }}</span></td>
+              <td class="text-muted small">{{ job.get('posted_date','')[:10] if job.get('posted_date') else '—' }}</td>
+              <td>
+                <a href="{{ url_for('recruiter.applicants', job_id=job.get('_id','')) }}" class="btn btn-sm btn-outline-primary">Applicants</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="text-center py-5">
+        <i class="bi bi-briefcase text-muted fs-1"></i>
+        <p class="text-muted mt-2">No jobs posted yet.</p>
+        <a href="{{ url_for('recruiter.create_job') }}" class="btn btn-primary btn-sm">Post Your First Job</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

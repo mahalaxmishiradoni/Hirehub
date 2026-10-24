@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero-section text-white py-5">
+  <div class="container py-4">
+    <div class="row align-items-center gy-4">
+      <div class="col-lg-6">
+        <h1 class="display-4 fw-bold mb-3">Find Your Dream Job with <span class="text-warning">HireHub</span></h1>
+        <p class="lead mb-4 opacity-90">Connect with top companies, discover the right opportunities, and take the next step in your career.</p>
+        <div class="d-flex flex-wrap gap-3">
+          <a href="{{ url_for('auth.register') }}?role=candidate" class="btn btn-warning btn-lg fw-semibold px-4">
+            <i class="bi bi-person-plus me-2"></i>I'm a Candidate
+          </a>
+          <a href="{{ url_for('auth.register') }}?role=recruiter" class="btn btn-outline-light btn-lg px-4">
+            <i class="bi bi-building me-2"></i>I'm a Recruiter
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-6 text-center d-none d-lg-block">
+        <img src="{{ url_for('static', filename='images/hero.svg') }}" alt="HireHub" class="img-fluid" style="max-height:320px;" onerror="this.style.display='none'">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Search bar -->
+<section class="bg-white shadow-sm py-4 border-bottom">
+  <div class="container">
+    <form action="{{ url_for('jobs.list_jobs') }}" method="GET" class="row g-2 align-items-center">
+      <div class="col-md-5">
+        <div class="input-group">
+          <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+          <input type="text" name="keyword" class="form-control" placeholder="Job title or keyword">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="input-group">
+          <span class="input-group-text bg-light"><i class="bi bi-geo-alt"></i></span>
+          <input type="text" name="location" class="form-control" placeholder="Location">
+        </div>
+      </div>
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-primary w-100 fw-semibold">
+          <i class="bi bi-search me-1"></i>Search Jobs
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="row g-4 text-center">
+      <div class="col-6 col-md-3">
+        <div class="stat-card p-4 rounded-3 bg-white shadow-sm h-100">
+          <div class="stat-icon text-primary mb-2"><i class="bi bi-briefcase-fill fs-1"></i></div>
+          <h3 class="fw-bold text-primary mb-1">1000+</h3>
+          <p class="text-muted mb-0">Active Jobs</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card p-4 rounded-3 bg-white shadow-sm h-100">
+          <div class="stat-icon text-success mb-2"><i class="bi bi-people-fill fs-1"></i></div>
+          <h3 class="fw-bold text-success mb-1">5000+</h3>
+          <p class="text-muted mb-0">Candidates</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card p-4 rounded-3 bg-white shadow-sm h-100">
+          <div class="stat-icon text-warning mb-2"><i class="bi bi-building-fill fs-1"></i></div>
+          <h3 class="fw-bold text-warning mb-1">200+</h3>
+          <p class="text-muted mb-0">Companies</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card p-4 rounded-3 bg-white shadow-sm h-100">
+          <div class="stat-icon text-danger mb-2"><i class="bi bi-check-circle-fill fs-1"></i></div>
+          <h3 class="fw-bold text-danger mb-1">800+</h3>
+          <p class="text-muted mb-0">Placements</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="py-5">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-5">How It Works</h2>
+    <div class="row g-4">
+      <div class="col-md-4 text-center">
+        <div class="step-circle bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:64px;height:64px;font-size:1.5rem;font-weight:700;">1</div>
+        <h5 class="fw-bold">Create Your Profile</h5>
+        <p class="text-muted">Register and build a compelling profile. Upload your resume to stand out.</p>
+      </div>
+      <div class="col-md-4 text-center">
+        <div class="step-circle bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:64px;height:64px;font-size:1.5rem;font-weight:700;">2</div>
+        <h5 class="fw-bold">Discover Opportunities</h5>
+        <p class="text-muted">Search and filter thousands of jobs. Get AI-powered recommendations.</p>
+      </div>
+      <div class="col-md-4 text-center">
+        <div class="step-circle bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:64px;height:64px;font-size:1.5rem;font-weight:700;">3</div>
+        <h5 class="fw-bold">Get Hired</h5>
+        <p class="text-muted">Apply with one click, track your applications, and land your dream role.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-5 bg-primary text-white text-center">
+  <div class="container">
+    <h2 class="fw-bold mb-3">Ready to take the next step?</h2>
+    <p class="lead mb-4 opacity-90">Join thousands of professionals who found their dream job on HireHub.</p>
+    <a href="{{ url_for('auth.register') }}" class="btn btn-warning btn-lg fw-semibold px-5">Get Started Free</a>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+      <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body p-4 p-md-5">
+          <div class="text-center mb-4">
+            <i class="bi bi-briefcase-fill text-primary fs-1"></i>
+            <h2 class="fw-bold mt-2">Welcome Back</h2>
+            <p class="text-muted">Sign in to your HireHub account</p>
+          </div>
+          <form method="POST" action="{{ url_for('auth.login') }}" novalidate>
+            <div class="mb-3">
+              <label for="email" class="form-label fw-semibold">Email Address</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" required autofocus>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label fw-semibold">Password</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                <button class="btn btn-outline-secondary" type="button" id="togglePwd" tabindex="-1">
+                  <i class="bi bi-eye" id="togglePwdIcon"></i>
+                </button>
+              </div>
+            </div>
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-primary btn-lg fw-semibold">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+              </button>
+            </div>
+          </form>
+          <hr class="my-4">
+          <p class="text-center mb-0 text-muted small">
+            Don't have an account?
+            <a href="{{ url_for('auth.register') }}" class="fw-semibold text-decoration-none">Register here</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('togglePwd').addEventListener('click', function() {
+  const pwd = document.getElementById('password');
+  const icon = document.getElementById('togglePwdIcon');
+  if (pwd.type === 'password') { pwd.type = 'text'; icon.className = 'bi bi-eye-slash'; }
+  else { pwd.type = 'password'; icon.className = 'bi bi-eye'; }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Edit Company{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-7">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <a href="{{ url_for('recruiter.profile') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i></a>
+        <h3 class="fw-bold mb-0">Edit Company Profile</h3>
+      </div>
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <form method="POST" action="{{ url_for('recruiter.edit_company') }}">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Company Name</label>
+                <input type="text" name="name" class="form-control" value="{{ company.get('name','') }}" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Industry</label>
+                <input type="text" name="industry" class="form-control" value="{{ company.get('industry','') }}" placeholder="e.g. Technology, Finance">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Location</label>
+                <input type="text" name="location" class="form-control" value="{{ company.get('location','') }}" placeholder="City, Country">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Company Size</label>
+                <select name="size" class="form-select">
+                  <option value="">Select size</option>
+                  {% for sz in ['1-10','11-50','51-200','201-500','501-1000','1000+'] %}
+                  <option value="{{ sz }}" {% if company.get('size') == sz %}selected{% endif %}>{{ sz }} employees</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-semibold">Website</label>
+                <input type="url" name="website" class="form-control" value="{{ company.get('website','') }}" placeholder="https://www.company.com">
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-semibold">Company Description</label>
+                <textarea name="description" class="form-control" rows="4" placeholder="Tell candidates about your company...">{{ company.get('description','') }}</textarea>
+              </div>
+            </div>
+            <div class="d-flex gap-3 mt-4">
+              <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+              <a href="{{ url_for('recruiter.profile') }}" class="btn btn-outline-secondary px-4">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Post a Job{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <a href="{{ url_for('recruiter.my_jobs') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i></a>
+        <h3 class="fw-bold mb-0">Post a New Job</h3>
+      </div>
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <form method="POST" action="{{ url_for('recruiter.create_job') }}">
+            <!-- Basic details -->
+            <h6 class="fw-bold text-muted text-uppercase small mb-3">Job Details</h6>
+            <div class="row g-3 mb-4">
+              <div class="col-12">
+                <label class="form-label fw-semibold">Job Title <span class="text-danger">*</span></label>
+                <input type="text" name="title" class="form-control" placeholder="e.g. Senior Python Developer" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-semibold">Job Description <span class="text-danger">*</span></label>
+                <textarea name="description" class="form-control" rows="6" placeholder="Describe the role, responsibilities, and requirements..." required></textarea>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Location <span class="text-danger">*</span></label>
+                <input type="text" name="location" class="form-control" placeholder="e.g. Bangalore, India" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Work Mode <span class="text-danger">*</span></label>
+                <select name="work_mode" class="form-select" required>
+                  <option value="">Select…</option>
+                  <option value="ONSITE">Onsite</option>
+                  <option value="REMOTE">Remote</option>
+                  <option value="HYBRID">Hybrid</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Employment Type <span class="text-danger">*</span></label>
+                <select name="employment_type" class="form-select" required>
+                  <option value="">Select…</option>
+                  <option value="FULL_TIME">Full Time</option>
+                  <option value="PART_TIME">Part Time</option>
+                  <option value="INTERNSHIP">Internship</option>
+                  <option value="CONTRACT">Contract</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Application Deadline</label>
+                <input type="date" name="deadline" class="form-control">
+              </div>
+            </div>
+
+            <hr class="my-4">
+            <h6 class="fw-bold text-muted text-uppercase small mb-3">Skills & Experience</h6>
+            <div class="row g-3 mb-4">
+              <div class="col-12">
+                <label class="form-label fw-semibold">Required Skills</label>
+                <input type="text" name="skills" class="form-control" placeholder="python, django, postgresql, docker">
+                <div class="form-text">Comma-separated list of required skills.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Min Experience (years)</label>
+                <input type="number" name="experience_min" class="form-control" min="0" placeholder="0">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Max Experience (years)</label>
+                <input type="number" name="experience_max" class="form-control" min="0" placeholder="10">
+              </div>
+            </div>
+
+            <hr class="my-4">
+            <h6 class="fw-bold text-muted text-uppercase small mb-3">Compensation</h6>
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Min Salary (LPA)</label>
+                <input type="number" name="salary_min" class="form-control" min="0" placeholder="e.g. 8">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Max Salary (LPA)</label>
+                <input type="number" name="salary_max" class="form-control" min="0" placeholder="e.g. 20">
+              </div>
+            </div>
+
+            <div class="d-flex gap-3 pt-2">
+              <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                <i class="bi bi-send me-2"></i>Post Job
+              </button>
+              <a href="{{ url_for('recruiter.my_jobs') }}" class="btn btn-outline-secondary px-4">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}My Applications{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0"><i class="bi bi-send me-2 text-primary"></i>My Applications</h3>
+    <a href="{{ url_for('jobs.list_jobs') }}" class="btn btn-primary btn-sm">
+      <i class="bi bi-search me-1"></i>Find More Jobs
+    </a>
+  </div>
+
+  {% if result.get('items') %}
+  <div class="row g-3">
+    {% for app in result['items'] %}
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+            <div class="flex-grow-1">
+              <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                <h5 class="fw-bold mb-0">{{ app.get('job_title','N/A') }}</h5>
+                <span class="badge status-badge-{{ app.get('status','').lower() }}">{{ app.get('status','') }}</span>
+              </div>
+              <div class="text-muted small mb-2">
+                {% if app.get('company_name') %}<span class="me-3"><i class="bi bi-building me-1"></i>{{ app.get('company_name','') }}</span>{% endif %}
+                {% if app.get('job_location') %}<span class="me-3"><i class="bi bi-geo-alt me-1"></i>{{ app.get('job_location','') }}</span>{% endif %}
+                <span><i class="bi bi-calendar me-1"></i>Applied {{ app.get('applied_at','')[:10] if app.get('applied_at') else '—' }}</span>
+              </div>
+              {% if app.get('recruiter_notes') %}
+              <div class="alert alert-info py-2 mb-0 small mt-2">
+                <i class="bi bi-chat-left-text me-1"></i><strong>Note:</strong> {{ app.get('recruiter_notes','') }}
+              </div>
+              {% endif %}
+            </div>
+            <div class="d-flex flex-column gap-2 align-items-end">
+              <a href="{{ url_for('jobs.job_detail', job_id=app.get('job_id','')) }}" class="btn btn-outline-primary btn-sm">View Job</a>
+              {% if app.get('status') not in ['SELECTED','REJECTED','WITHDRAWN'] %}
+              <form method="POST" action="{{ url_for('candidate.withdraw_application', app_id=app.get('_id','')) }}"
+                    onsubmit="return confirm('Withdraw this application?')">
+                <button type="submit" class="btn btn-outline-danger btn-sm">Withdraw</button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if result.get('total_pages', 1) > 1 %}
+  <nav class="mt-4">
+    <ul class="pagination justify-content-center">
+      {% for p in range(1, result['total_pages'] + 1) %}
+      <li class="page-item {% if p == result.get('page',1) %}active{% endif %}">
+        <a class="page-link" href="{{ url_for('candidate.applications', page=p) }}">{{ p }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </nav>
+  {% endif %}
+
+  {% else %}
+  <div class="text-center py-5">
+    <i class="bi bi-inbox text-muted" style="font-size:3rem;"></i>
+    <h5 class="mt-3 text-muted">No applications yet</h5>
+    <p class="text-muted">Start applying to jobs to track your progress here.</p>
+    <a href="{{ url_for('jobs.list_jobs') }}" class="btn btn-primary">Browse Jobs</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

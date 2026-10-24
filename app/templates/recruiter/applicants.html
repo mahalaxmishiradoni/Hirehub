@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Applicants — {{ job.get('title','') }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+  <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+    <a href="{{ url_for('recruiter.my_jobs') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i></a>
+    <div>
+      <h3 class="fw-bold mb-0">Applicants — {{ job.get('title','') }}</h3>
+      <p class="text-muted mb-0 small">
+        <i class="bi bi-geo-alt me-1"></i>{{ job.get('location','') }}
+        · <span class="badge status-badge-{{ job.get('status','').lower() }}">{{ job.get('status','') }}</span>
+        · {{ result.get('total',0) }} applicant(s)
+      </p>
+    </div>
+  </div>
+
+  {% if result.get('items') %}
+  <div class="row g-3">
+    {% for app in result['items'] %}
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+            <div class="flex-grow-1">
+              <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                <h5 class="fw-bold mb-0">{{ app.get('candidate_name','Unknown Candidate') }}</h5>
+                <span class="badge status-badge-{{ app.get('status','').lower() }}">{{ app.get('status','') }}</span>
+              </div>
+              <div class="text-muted small mb-2">
+                <span class="me-3"><i class="bi bi-envelope me-1"></i>{{ app.get('candidate_email','') }}</span>
+                {% if app.get('candidate_location') %}
+                <span class="me-3"><i class="bi bi-geo-alt me-1"></i>{{ app.get('candidate_location','') }}</span>
+                {% endif %}
+                <span><i class="bi bi-calendar me-1"></i>Applied {{ app.get('applied_at','')[:10] if app.get('applied_at') else '—' }}</span>
+              </div>
+              {% if app.get('candidate_skills') %}
+              <div class="d-flex flex-wrap gap-1">
+                {% for skill in app.get('candidate_skills',[])[:6] %}
+                <span class="badge bg-primary bg-opacity-10 text-primary skill-badge">{{ skill }}</span>
+                {% endfor %}
+              </div>
+              {% endif %}
+              {% if app.get('recruiter_notes') %}
+              <div class="alert alert-light py-2 small mt-2 mb-0">
+                <i class="bi bi-chat-left me-1"></i><strong>Note:</strong> {{ app.get('recruiter_notes','') }}
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="d-flex flex-column gap-2 align-items-end">
+              <!-- Status update form -->
+              <form method="POST" action="{{ url_for('recruiter.update_application', app_id=app.get('_id','')) }}" class="d-flex gap-2 align-items-center">
+                <input type="hidden" name="job_id" value="{{ job.get('_id','') }}">
+                <select name="status" class="form-select form-select-sm" style="min-width:160px;">
+                  {% for st in ['UNDER_REVIEW','SHORTLISTED','REJECTED'] %}
+                  <option value="{{ st }}" {% if app.get('status') == st %}selected{% endif %}>{{ st.replace('_',' ').title() }}</option>
+                  {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary btn-sm">Update</button>
+              </form>
+
+              {% if app.get('status') == 'SHORTLISTED' %}
+              <a href="{{ url_for('recruiter.schedule_interview', app_id=app.get('_id','')) }}" class="btn btn-success btn-sm">
+                <i class="bi bi-calendar-plus me-1"></i>Schedule Interview
+              </a>
+              {% endif %}
+
+              {% if app.get('interview_id') %}
+              <!-- Download resume if available -->
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% if result.get('total_pages',1) > 1 %}
+  <nav class="mt-4">
+    <ul class="pagination justify-content-center">
+      {% for p in range(1, result['total_pages'] + 1) %}
+      <li class="page-item {% if p == result.get('page',1) %}active{% endif %}">
+        <a class="page-link" href="{{ url_for('recruiter.applicants', job_id=job.get('_id',''), page=p) }}">{{ p }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </nav>
+  {% endif %}
+
+  {% else %}
+  <div class="text-center py-5">
+    <i class="bi bi-people text-muted" style="font-size:3rem;"></i>
+    <h5 class="mt-3 text-muted">No applicants yet</h5>
+    <p class="text-muted">Share the job posting to attract candidates.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
